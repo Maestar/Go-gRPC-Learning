@@ -1,0 +1,42 @@
+//define the syntax you want to use, current version right now is proto3
+syntax = "proto3";
+
+//define a package for this file, that will help generate the go module for this proto file
+package proto;
+
+//the message is the data structure we want for the request the client will send
+//we want the client to send two ints to add together on the server, so we're going to list two ints in
+//the message request
+message Request {
+
+    // the number they're equal to tells us how many bytes of data this data type will take up.
+    // NOTE: the number a data type is assigned to must be unique inside its own function.
+    // 1-15 = 1 byte of data 16-2047 = 2 bytes of data (or more?)
+    int64 a = 1;
+    int64 b = 2;
+
+}
+
+//what the server will respond with after getting the request from the client.
+//since this is adding two numbers that the client sends, it's going to send just one number back, an int
+message Response {
+
+    //because this data type is in it's own message it's byte assignment doesn't have to be unique to the ones
+    //in the message above it.
+    int64 result = 1;
+
+}
+
+//what service the server returns to the client. Basically all the methods that the server can provide.
+service AddService {
+    //all of these always start with rpc
+    //rpc nameOfFunction(whatItTakes) returns(WhatItReturns)
+    //so these take the two ints in request and return the one int in response
+    rpc Add(Request) returns (Response);
+    rpc Multiply(Request) returns (Response);
+}
+
+//NOTE: add a 'third_party' folder to your api folder and copy the include folder from protobuf into it. (the folder labeled google)
+//This will save you a lot of trouble when running commands in commandline.
+
+//COMMAND TO RUN TO COMPILE PROTO FILE: protoc --proto_path=proto --proto_path=third_party --go_out=plugins=grpc:proto service.proto
